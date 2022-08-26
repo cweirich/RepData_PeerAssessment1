@@ -5,18 +5,76 @@ output:
     keep_md: true
 ---
 
-
 ## Loading and preprocessing the data
 
+First let's load the packages we'll need
+```{r, message = F}
+library(dplyr)
+library(lubridate)
+library(stringr)
+```
 
+Then let's load the dataset into memory
+```{r}
+activityData <- read.csv("activity.csv")
+```
+
+And process some data to make our life easier later
+```{r}
+#activityData$interval <- str_pad(activityData$interval, 4, pad = "0")
+#activityData$timestamp <- 
+    #ymd_hm(paste(activityData$date, activityData$interval))
+```
 
 ## What is mean total number of steps taken per day?
 
+1.Calculate the total number of steps taken per day
+```{r}
+byDay <- activityData %>% group_by(date)
+sumByDay <- summarize(byDay, totalSteps=sum(steps))
+```
 
+2.Make a histogram of the total number of steps taken each day
+```{r}
+hist(sumByDay$totalSteps, 
+     main = "Histogram of total steps taken each day", 
+     xlab = "Number of steps")
+```
+
+3.Calculate and report the mean and median of the total number of steps taken
+per day
+```{r}
+mean(sumByDay$totalSteps, na.rm = T)
+median(sumByDay$totalSteps, na.rm = T)
+```
 
 ## What is the average daily activity pattern?
 
+1. Make a time series plot (i.e. \color{red}{\verb|type = "l"|}type = "l") of 
+the 5-minute interval (x-axis) and the average number of steps taken, averaged 
+across all days (y-axis)
+```{r}
+byInterval <- activityData %>% group_by(interval)
+avgByInterval <- summarize(byInterval, avgSteps=mean(steps, na.rm = T))
+plot(avgByInterval$interval, 
+     avgByInterval$avgSteps, 
+     type = "l", 
+     main = "Timeseries of Avg. Number of Steps Taken", 
+     xlab = "Interval", 
+     ylab = "Average Steps")
+```
 
+2. Which 5-minute interval, on average across all the days in the dataset, 
+contains the maximum number of steps?
+```{r}
+paste("The maximum avg number of steps is", max(avgByInterval$avgSteps), 
+      "in an interval")
+paste("And that interval is the",
+      paste(avgByInterval$interval[which.max(avgByInterval$avgSteps)], 
+            "th", 
+            sep=""), 
+      "considering all days")
+```
 
 ## Imputing missing values
 

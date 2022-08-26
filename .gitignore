@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+PA1_template.*
+!PA1_template.Rmd
+*.Rproj
+*.csv
+PA1_template_files
